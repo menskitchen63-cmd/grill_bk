@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Интерактивный рецепт — лосось на гриле с овощной сальсой</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --bk-black:#07090c;
+      --bk-deep:#0b1b14;
+      --bk-emerald:#0f6b4f;
+      --bk-gold:#d4af37;
+      --bk-gold-2:#f3d27a;
+      --bk-sky:#56b6ff;
+      --bk-slate:#cbd5e1;
+    }
+    body{
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(86,182,255,0.12), transparent 55%),
+                  radial-gradient(900px 500px at 80% 10%, rgba(212,175,55,0.10), transparent 60%),
+                  linear-gradient(180deg, #06070a 0%, var(--bk-black) 40%, #0a0e12 100%);
+    }
+    .bk-glass{
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(212,175,55,0.18);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+    }
+    .bk-glass-2{
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(148,163,184,0.20);
+    }
+    .bk-ring{
+      box-shadow: 0 0 0 1px rgba(212,175,55,0.18) inset;
+    }
+    .bk-divider{
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.45), rgba(86,182,255,0.25), rgba(212,175,55,0.45), transparent);
+    }
+    .bk-btn{
+      position: relative;
+      overflow: hidden;
+      transform: translateZ(0);
+      transition: transform 120ms ease, filter 140ms ease, background 140ms ease;
+    }
+    .bk-btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+    .bk-btn:focus{ outline: none; }
+    .bk-btn::after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(250px 120px at 20% 0%, rgba(212,175,55,0.25), transparent 55%),
+                  radial-gradient(220px 110px at 90% 0%, rgba(86,182,255,0.18), transparent 55%);
+      opacity:0;
+      transition: opacity 180ms ease;
+      pointer-events:none;
+    }
+    .bk-btn:hover::after{ opacity:1; }
+    .bk-pill{
+      border-radius: 9999px;
+    }
+    .bk-input{
+      background: rgba(255,255,255,0.04) !important;
+      border: 1px solid rgba(148,163,184,0.25) !important;
+      color: #e5e7eb !important;
+    }
+    .bk-input:focus{
+      outline: none;
+      border-color: rgba(86,182,255,0.55) !important;
+      box-shadow: 0 0 0 3px rgba(86,182,255,0.16);
+    }
+    .bk-label{ color: rgba(226,232,240,0.78); }
+
+    /* чековые карточки */
+    .step-card{
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(148,163,184,0.20);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
+    }
+    .step-card:hover{
+      border-color: rgba(212,175,55,0.25);
+    }
+    .step-check{
+      accent-color: var(--bk-gold);
+      width: 18px;
+      height: 18px;
+    }
+
+    /* прогресс */
+    #progressBar{
+      background: linear-gradient(90deg, rgba(212,175,55,1), rgba(86,182,255,1));
+    }
+
+    /* галочка/статусы */
+    .bk-tag{
+      border-radius: 9999px;
+      border: 1px solid rgba(212,175,55,0.22);
+      background: rgba(255,255,255,0.06);
+      color: rgba(226,232,240,0.95);
+    }
+
+    /* мелкие тех. тексты */
+    .bk-sub{
+      color: rgba(203,213,225,0.76);
+    }
+
+    /* фоновые иконки-орнаменты */
+    .bk-icon-bg{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bk-float-icon{
+      position: absolute;
+      width: 96px;
+      height: 96px;
+      opacity: 0.12;
+      filter: drop-shadow(0 12px 40px rgba(0,0,0,0.45));
+      transform: translateZ(0);
+      user-select: none;
+    }
+
+    .bk-float-icon svg{
+      width: 100%;
+      height: 100%;
+      stroke: rgba(212,175,55,0.95);
+      fill: rgba(86,182,255,0.22);
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .bk-float-icon .alt-fill{
+      fill: rgba(212,175,55,0.18);
+    }
+  </style>
+</head>
+<body class="text-slate-100">
+  <div aria-hidden="true" class="bk-icon-bg">
+
+    <!-- рыба -->
+    <div class="bk-float-icon" style="left: 3%; top: 14%; transform: rotate(-12deg) scale(1.05);">
+      <svg viewBox="0 0 64 64">
+        <path d="M14 34c5-12 16-20 29-20h9l-8 8 8 8h-9c-13 0-24-8-29-20"/>
+        <path class="alt-fill" d="M14 34c5 12 16 20 29 20h9l-8-8 8-8h-9c-13 0-24 8-29 20"/>
+        <circle cx="44" cy="32" r="2.6" fill="rgba(212,175,55,0.7)" stroke="none"/>
+        <path d="M9 32h5"/>
+      </svg>
+    </div>
+
+    <!-- специи -->
+    <div class="bk-float-icon" style="right: 6%; top: 20%; transform: rotate(8deg) scale(0.98);">
+      <svg viewBox="0 0 64 64">
+        <path d="M22 12h20"/>
+        <path d="M26 12v-4h12v4"/>
+        <path d="M22 18h20l-4 34H26l-4-34z"/>
+        <path d="M26 26h12"/>
+        <path d="M28 34h8"/>
+        <path d="M29 42h6"/>
+      </svg>
+    </div>
+
+    <!-- гриль -->
+    <div class="bk-float-icon" style="left: 22%; bottom: 10%; transform: rotate(-8deg) scale(0.92);">
+      <svg viewBox="0 0 64 64">
+        <path d="M10 22h44"/>
+        <path d="M16 22v20h32V22"/>
+        <path d="M20 42h24"/>
+        <path d="M22 30h4"/>
+        <path d="M28 30h4"/>
+        <path d="M34 30h4"/>
+        <path d="M40 30h4"/>
+      </svg>
+    </div>
+
+    <!-- сковорода -->
+    <div class="bk-float-icon" style="right: 20%; bottom: 16%; transform: rotate(7deg) scale(1.02);">
+      <svg viewBox="0 0 64 64">
+        <path d="M18 36h32c0 12-9 22-16 22s-16-10-16-22z"/>
+        <path d="M50 36l8-7c2-2 1-5-2-6l-8-2"/>
+        <path d="M22 24c4-6 10-9 16-9"/>
+        <path d="M28 52h12"/>
+      </svg>
+    </div>
+
+    <!-- духовка -->
+    <div class="bk-float-icon" style="left: 44%; top: 34%; transform: rotate(10deg) scale(0.86);">
+      <svg viewBox="0 0 64 64">
+        <path d="M20 12h24v46H20V12z"/>
+        <path d="M26 22h12"/>
+        <path d="M32 40c6 0 10-4 10-10S38 20 32 20s-10 4-10 10 4 10 10 10z"/>
+        <circle cx="32" cy="30" r="3.2" class="alt-fill" stroke="none"/>
+      </svg>
+    </div>
+
+  </div>
+  <div class="max-w-6xl mx-auto px-4 py-10 relative z-10">
+
+    <!-- Header -->
+    <header class="mb-7">
+      <div class="flex items-center gap-4 flex-wrap">
+        <div class="bk-glass rounded-2xl px-4 py-3 bk-ring">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500/95 via-amber-400/70 to-sky-400/60 shadow-soft border border-yellow-400/35"></div>
+            <div>
+              <div class="flex items-center gap-3">
+                <h1 class="text-xl sm:text-2xl font-extrabold tracking-wide">BROIL KING • CapeHerb</h1>
+              </div>
+              <p class="text-sm bk-sub">Интерактивный план гриль-подготовки: шаги, таймеры и чеклист в одном окне.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-1">
+          <div class="bk-divider mb-3"></div>
+          <div class="flex items-baseline justify-between gap-4 flex-wrap">
+            <div>
+              <div class="text-sm bk-sub">Рецепт</div>
+              <div class="text-2xl font-extrabold">Лосось на гриле с овощной сальсой</div>
+            </div>
+            <div class="bk-tag px-4 py-2 text-sm font-semibold">
+              Статус: <span id="statusText">готово к старту</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="grid gap-4 lg:grid-cols-5">
+
+      <!-- Left: settings + ingredients -->
+      <div class="lg:col-span-2">
+        <div class="bk-glass rounded-2xl p-5">
+          <h2 class="font-bold text-lg mb-3">Настройка</h2>
+
+          <div class="space-y-4">
+            <label class="block">
+              <span class="bk-label text-sm">Порции</span>
+              <select id="servings" class="mt-1 w-full rounded-xl bk-input px-3 py-2">
+                <option value="2">2</option>
+                <option value="4" selected>4</option>
+                <option value="6">6</option>
+              </select>
+            </label>
+
+            <div class="space-y-2">
+              <div class="bk-label text-sm">Интенсивность CapeHerb</div>
+              <div class="inline-flex flex-wrap items-center gap-2">
+                <button type="button" data-heat="mild" class="heat-btn bk-pill bk-btn px-4 py-1.5 text-sm font-semibold border border-slate-500/25 bg-white/5 text-slate-100 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-sky-400/40">
+                  Лёгкая
+                </button>
+                <button type="button" data-heat="classic" class="heat-btn bk-pill bk-btn px-4 py-1.5 text-sm font-semibold border border-slate-500/25 bg-white/5 text-slate-100 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-sky-400/40">
+                  Классика
+                </button>
+                <button type="button" data-heat="hot" class="heat-btn bk-pill bk-btn px-4 py-1.5 text-sm font-semibold border border-slate-500/25 bg-white/5 text-slate-100 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-sky-400/40">
+                  Остро
+                </button>
+              </div>
+              <p id="heatNote" class="text-xs text-slate-400 mt-1">Выберите уровень — количество смеси пересчитается автоматически.</p>
+            </div>
+
+            <label class="block">
+              <span class="bk-label text-sm">Способ</span>
+              <select id="method" class="mt-1 w-full rounded-xl bk-input px-3 py-2">
+                <option value="grill" selected>Гриль</option>
+                <option value="oven">Духовка</option>
+                <option value="pan">Сковорода</option>
+              </select>
+            </label>
+
+            <div class="rounded-xl bk-glass-2 p-4">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="text-sm font-semibold">Степень</div>
+                  <div class="text-xs bk-sub">Подстроим время жарки/запекания.</div>
+                </div>
+                <span class="bk-tag px-3 py-1 text-xs font-semibold ring-0" id="donenessTag">Средняя</span>
+              </div>
+
+              <div class="mt-3 flex gap-2 flex-wrap">
+                <button type="button" class="doneness-btn bk-pill bk-btn px-3 py-1 text-sm border border-slate-500/25 bg-white/5 hover:bg-white/10" data-d="medium" aria-pressed="true">Средняя</button>
+                <button type="button" class="doneness-btn bk-pill bk-btn px-3 py-1 text-sm border border-slate-500/25 bg-white/5 hover:bg-white/10" data-d="soft" aria-pressed="false">Сочная</button>
+                <button type="button" class="doneness-btn bk-pill bk-btn px-3 py-1 text-sm border border-slate-500/25 bg-white/5 hover:bg-white/10" data-d="well" aria-pressed="false">Плотная</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bk-glass rounded-2xl p-5 mt-4">
+          <h2 class="font-bold text-lg mb-3">Ингредиенты</h2>
+
+          <div class="space-y-2">
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-sm text-slate-200">Филе лосося</span>
+              <span class="font-semibold" id="ing-salmon">800 г</span>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-sm text-slate-200">Оливковое масло</span>
+              <span class="font-semibold" id="ing-oil">2 ст. л.</span>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-sm text-slate-200">CapeHerb (смесь для лосося/гриля)</span>
+              <span class="font-semibold" id="ing-spice">2 ч. л.</span>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-sm text-slate-200">Соль</span>
+              <span class="font-semibold" id="ing-salt">по вкусу</span>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-sm text-slate-200">Лайм/лимон</span>
+              <span class="font-semibold" id="ing-citrus">1 шт.</span>
+            </div>
+
+            <div class="mt-3 pt-3 border-t border-white/10">
+              <div class="text-sm font-semibold mb-2">Овощная сальса</div>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between gap-3">
+                  <span class="text-sm text-slate-200">Огурец</span>
+                  <span class="font-semibold" id="ing-cucumber">1 шт.</span>
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  <span class="text-sm text-slate-200">Помидор</span>
+                  <span class="font-semibold" id="ing-tomato">2 шт.</span>
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  <span class="text-sm text-slate-200">Болгарский перец</span>
+                  <span class="font-semibold" id="ing-pepper">1/2 шт.</span>
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  <span class="text-sm text-slate-200">Красный лук</span>
+                  <span class="font-semibold" id="ing-onion">1/4 шт.</span>
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  <span class="text-sm text-slate-200">Кинза/петрушка</span>
+                  <span class="font-semibold" id="ing-herbs">1/2 пучка</span>
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  <span class="text-sm text-slate-200">Чили (по желанию)</span>
+                  <span class="font-semibold" id="ing-chili">1/2 стручка</span>
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  <span class="text-sm text-slate-200">Оливковое масло (в сальсу)</span>
+                  <span class="font-semibold" id="ing-oil-salsa">1 ст. л.</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mt-4 flex flex-wrap items-center gap-2">
+            <button id="toggleChecklist" type="button" class="bk-btn bk-pill inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-emerald-600 to-sky-600 shadow-lg hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-sky-400/50">
+              Добавить в список
+            </button>
+            <button id="copyPlan" type="button" class="bk-btn bk-pill inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold text-slate-100 bg-white/5 border border-white/15 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-sky-400/40">
+              Скопировать рецепт
+            </button>
+          </div>
+          <p id="checklistMsg" class="mt-2 text-xs text-slate-400"></p>
+        </div>
+      </div>
+
+      <!-- Right: steps + timers -->
+      <div class="lg:col-span-3">
+        <div class="bk-glass rounded-2xl p-5">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h2 class="font-bold text-lg">Пошагово</h2>
+              <p class="text-sm bk-sub mt-1">Отмечайте шаги — прогресс сохранится в браузере.</p>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-slate-400">Прогресс</div>
+              <div class="font-extrabold text-xl" id="progressText">0/6</div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <div class="w-full h-3 rounded-full bg-white/10 overflow-hidden ring-1 ring-white/10">
+              <div id="progressBar" class="h-full w-0" style="transition: width 250ms ease;"></div>
+            </div>
+            <div class="mt-2 text-xs text-slate-400" id="timeHint">Время готовки под ваш выбор: —</div>
+          </div>
+
+          <div class="mt-5 space-y-3">
+            <div class="step-card p-4" data-step="0">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" class="step-check" />
+                <div>
+                  <p class="font-bold">1) Подготовьте рыбу</p>
+                  <p class="text-sm text-slate-300">Промокните филе, слегка посолите (или используйте соль умеренно), выжмите немного лайма.</p>
+                </div>
+              </label>
+            </div>
+
+            <div class="step-card p-4" data-step="1">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" class="step-check" />
+                <div>
+                  <p class="font-bold">2) Маринад CapeHerb</p>
+                  <p class="text-sm text-slate-300">Смешайте масло, CapeHerb и оставшийся сок цитруса. Обмажьте рыбу и дайте постоять 10 минут.</p>
+                </div>
+              </label>
+            </div>
+
+            <div class="step-card p-4" data-step="2">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" class="step-check" />
+                <div>
+                  <p class="font-bold">3) Сделайте сальсу</p>
+                  <p class="text-sm text-slate-300">Нарежьте огурец, помидор, перец и лук кубиком. Добавьте зелень, чили по вкусу, масло и сок лайма. Перемешайте.</p>
+                </div>
+              </label>
+            </div>
+
+            <div class="step-card p-4" data-step="3">
+              <div class="flex items-start justify-between gap-4">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" class="step-check" />
+                  <div>
+                    <p class="font-bold">4) Разогрейте</p>
+                    <p class="text-sm text-slate-300">Разогрейте гриль/сковороду/духовку до нужного режима. Подготовьте поверхность, чтобы рыба не прилипала.</p>
+                  </div>
+                </label>
+              </div>
+
+              <div class="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <p class="text-xs text-slate-400">Таймер разогрева</p>
+                  <p class="font-semibold" id="preheatLabel">—</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" id="preheatBtn" class="bk-btn bk-pill rounded-xl bg-slate-100/10 text-white px-3 py-2 text-sm font-semibold hover:bg-slate-100/15 focus:outline-none focus:ring-2 focus:ring-sky-400/40">Старт</button>
+                  <button type="button" id="preheatReset" class="bk-btn bk-pill rounded-xl border border-white/15 bg-white/5 text-slate-100 px-3 py-2 text-sm font-semibold hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-sky-400/30">Сброс</button>
+                </div>
+              </div>
+              <div class="mt-2 text-sm font-semibold" id="preheatTime">00:00</div>
+            </div>
+
+            <div class="step-card p-4" data-step="4">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" class="step-check" />
+                <div>
+                  <p class="font-bold">5) Готовьте до вашего результата</p>
+                  <p class="text-sm text-slate-300" id="cookDesc">—</p>
+                </div>
+              </label>
+
+              <div class="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <p class="text-xs text-slate-400">Таймер готовки</p>
+                  <p class="font-semibold" id="cookLabel">—</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" id="cookBtn" class="bk-btn bk-pill rounded-xl bg-gradient-to-r from-emerald-600 to-sky-600 text-white px-3 py-2 text-sm font-semibold hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-sky-400/40">Старт</button>
+                  <button type="button" id="cookReset" class="bk-btn bk-pill rounded-xl border border-white/15 bg-white/5 text-slate-100 px-3 py-2 text-sm font-semibold hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-sky-400/30">Сброс</button>
+                </div>
+              </div>
+              <div class="mt-2 text-sm font-semibold" id="cookTime">00:00</div>
+            </div>
+
+            <div class="step-card p-4" data-step="5">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" class="step-check" />
+                <div>
+                  <p class="font-bold">6) Подавайте</p>
+                  <p class="text-sm text-slate-300">Положите рыбу на тарелку, сверху — сальсу. Добавьте дольку лайма и свежую зелень.</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="mt-5 rounded-2xl border border-white/10 bg-white/4 p-4">
+            <h3 class="font-bold">Список для вас (чеклист)</h3>
+            <p class="text-sm bk-sub mt-1">Нажмите «Добавить в список», чтобы получить чеклист под выбранные порции.</p>
+            <div class="mt-3 flex flex-col gap-2" id="checklistBox"></div>
+          </div>
+        </div>
+
+        <footer class="mt-4 text-center text-xs text-slate-400">
+          Подсказка: напишите в бот «подобрать рецепт» — я соберу план под ваши ингредиенты и уровень остроты.
+        </footer>
+      </div>
+
+    </section>
+  </div>
+
+  <script>
+    // ---------- Утилиты ----------
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+    const state = {
+      servings: 4,
+      heat: 'classic',
+      doneness: 'medium',
+      method: 'grill',
+      checklistAdded: false
+    };
+
+    // База для 4 порций
+    const base = {
+      salmon_g: 800,
+      oil_tbsp: 2,
+      spice_tsp: { mild: 2/1.5, classic: 2, hot: 2*1.5 },
+      citrus: 1,
+
+      cucumber: 1,
+      tomato: 2,
+      pepper_half: 1/2,
+      onion_quarter: 1/4,
+      herbs_half_bunch: 1/2,
+      chili_half: 1/2,
+      oil_salsa_tbsp: 1,
+
+      preheat_min: { grill: 10, oven: 12, pan: 8 },
+      cook_min: {
+        grill: { soft: 6, medium: 7, well: 9 },
+        oven: { soft: 12, medium: 15, well: 18 },
+        pan: { soft: 5, medium: 6, well: 7 }
+      }
+    };
+
+    function setActiveHeat(btn) {
+      $$('.heat-btn').forEach(b => {
+        b.classList.remove('ring-2');
+        b.classList.add('border-white/15');
+      });
+      btn.classList.add('ring-2');
+      btn.classList.remove('border-white/15');
+      btn.style.borderColor = 'rgba(212,175,55,0.6)';
+      btn.style.boxShadow = '0 0 0 3px rgba(212,175,55,0.10)';
+    }
+
+    function setActiveDoneness(btn) {
+      $$('.doneness-btn').forEach(b => {
+        b.style.borderColor = 'rgba(148,163,184,0.25)';
+        b.style.boxShadow = 'none';
+      });
+      btn.style.borderColor = 'rgba(212,175,55,0.60)';
+      btn.style.boxShadow = '0 0 0 3px rgba(212,175,55,0.10)';
+    }
+
+    function oilToText(tbsp) {
+      if (tbsp < 0.5) return `${Math.round(tbsp*10)/10} ст. л.`;
+      const rounded = Math.round(tbsp * 2) / 2;
+      if (rounded === 1) return '1 ст. л.';
+      if (rounded % 1 === 0) return `${rounded} ст. л.`;
+      return `${rounded} ст. л.`;
+    }
+
+    function spiceToText(tsp) {
+      const rounded = Math.round(tsp * 2) / 2;
+      if (rounded < 1) {
+        const g = Math.round(rounded * 4) / 4;
+        return `${g} ч. л.`;
+      }
+      if (rounded === 1) return '1 ч. л.';
+      return `${rounded} ч. л.`;
+    }
+
+    function scaleCount(value, mult) {
+      const v = value * mult;
+      const rounded = Math.round(v*2)/2;
+      if (rounded === 1) return `1 шт.`;
+      if (rounded % 1 === 0) return `${rounded} шт.`;
+      return `${rounded} шт.`;
+    }
+
+    function scaleHalf(value, mult) {
+      const v = value * mult;
+      const options = [0.25, 0.5, 0.75, 1, 1.5, 2];
+      let best = options[0];
+      for (const o of options) {
+        if (Math.abs(o - v) < Math.abs(best - v)) best = o;
+      }
+      if (best === 0.25) return '1/4 шт.';
+      if (best === 0.5) return '1/2 шт.';
+      if (best === 0.75) return '3/4 шт.';
+      if (best === 1) return '1 шт.';
+      if (best === 1.5) return '1,5 шт.';
+      return '2 шт.';
+    }
+
+    function updateIngredients() {
+      const mult = state.servings / 4;
+
+      const salmon = base.salmon_g * mult;
+      const oil = base.oil_tbsp * mult;
+      const spice = base.spice_tsp[state.heat] * mult;
+
+      $('#ing-salmon').textContent = `${Math.round(salmon)} г`;
+      $('#ing-oil').textContent = oilToText(oil);
+      $('#ing-spice').textContent = spiceToText(spice);
+
+      $('#ing-citrus').textContent = mult >= 1.5 ? '2 шт.' : '1 шт.';
+
+      $('#ing-cucumber').textContent = scaleCount(base.cucumber, mult);
+      $('#ing-tomato').textContent = scaleCount(base.tomato, mult);
+      $('#ing-pepper').textContent = scaleHalf(base.pepper_half, mult);
+      $('#ing-onion').textContent = scaleHalf(base.onion_quarter, mult);
+      $('#ing-herbs').textContent = scaleHalf(base.herbs_half_bunch, mult);
+      $('#ing-chili').textContent = scaleHalf(base.chili_half, mult);
+      $('#ing-oil-salsa').textContent = oilToText(base.oil_salsa_tbsp * mult);
+    }
+
+    function updatePlanText() {
+      const m = state.method;
+      const d = state.doneness;
+
+      const cookMin = base.cook_min[m][d];
+      const preheatMin = base.preheat_min[m];
+
+      $('#preheatLabel').textContent = `~${preheatMin} минут`;
+      $('#cookLabel').textContent = `~${cookMin} минут`;
+
+      const cookDesc = {
+        grill: {
+          soft: 'Гриль: жарьте до сочности, в среднем ~6 минут, переверните один раз (по желанию) через половину времени.',
+          medium: 'Гриль: готовьте до средней степени, в среднем ~7 минут. Ориентируйтесь на румяную корочку.',
+          well: 'Гриль: чтобы корочка была плотнее, в среднем ~9 минут. Следите, чтобы специи не горели.'
+        },
+        oven: {
+          soft: 'Духовка: запекайте ~12 минут, чтобы середина оставалась сочной.',
+          medium: 'Духовка: запекайте ~15 минут для равномерного прогрева.',
+          well: 'Духовка: запекайте ~18 минут до более плотной текстуры.'
+        },
+        pan: {
+          soft: 'Сковорода: обжарьте ~5 минут, чтобы лосось оставался нежным.',
+          medium: 'Сковорода: ~6 минут до средней готовности.',
+          well: 'Сковорода: ~7 минут, чтобы текстура была плотнее.'
+        }
+      };
+
+      $('#cookDesc').textContent = cookDesc[m][d];
+
+      const total = preheatMin + cookMin;
+      $('#timeHint').textContent = `Время готовки под ваш выбор: ~${total} минут (разогрев + жарка).`;
+
+      const tag = {
+        medium: 'Средняя',
+        soft: 'Сочная',
+        well: 'Плотная'
+      };
+      $('#donenessTag').textContent = tag[d] || 'Средняя';
+    }
+
+    // ---------- Таймеры ----------
+    let timerPreheat = null;
+    let timerCook = null;
+
+    function startTimer(targetEl, seconds, kind) {
+      const startedAt = Date.now();
+      const total = seconds;
+
+      const pad = (n) => String(n).padStart(2,'0');
+      const render = (remain) => {
+        const m = Math.floor(remain / 60);
+        const s = remain % 60;
+        targetEl.textContent = `${pad(m)}:${pad(s)}`;
+      };
+
+      render(total);
+
+      const t = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startedAt)/1000);
+        const remain = Math.max(0, total - elapsed);
+        render(remain);
+        if (remain === 0) {
+          clearInterval(t);
+          if (kind === 'preheat') {
+            $('#preheatBtn').textContent = 'Готово';
+            setTimeout(() => ($('#preheatBtn').textContent = 'Старт'), 1200);
+          }
+          if (kind === 'cook') {
+            $('#cookBtn').textContent = 'Готово';
+            setTimeout(() => ($('#cookBtn').textContent = 'Старт'), 1200);
+          }
+          const st = kind === 'preheat' ? 'разогрето' : 'приготовлено';
+          $('#statusText').textContent = st;
+        }
+      }, 250);
+
+      return t;
+    }
+
+    function stopTimer(timerId) {
+      if (timerId) clearInterval(timerId);
+    }
+
+    function resetTimer(targetEl, seconds) {
+      const pad = (n) => String(n).padStart(2,'0');
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      targetEl.textContent = `${pad(m)}:${pad(s)}`;
+    }
+
+    function getCurrentTimesSeconds() {
+      const m = state.method;
+      const d = state.doneness;
+      const pre = base.preheat_min[m];
+      const cook = base.cook_min[m][d];
+      return { pre: pre*60, cook: cook*60 };
+    }
+
+    // ---------- Прогресс шагов ----------
+    const STORAGE_KEY = 'recipe_steps_bk_v2';
+
+    function loadProgress() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        const checks = $$('.step-check');
+        checks.forEach((inp, idx) => {
+          inp.checked = !!data[idx];
+        });
+      } catch (e) {}
+    }
+
+    function saveProgress() {
+      const checks = $$('.step-check');
+      const data = {};
+      checks.forEach((inp, idx) => data[idx] = inp.checked);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function updateProgressUI() {
+      const checks = $$('.step-check');
+      const done = checks.filter(x => x.checked).length;
+      const total = checks.length;
+      $('#progressText').textContent = `${done}/${total}`;
+      const pct = total === 0 ? 0 : Math.round((done/total)*100);
+      $('#progressBar').style.width = `${pct}%`;
+      saveProgress();
+    }
+
+    // ---------- Чеклист ----------
+    function renderChecklist() {
+      const mult = state.servings / 4;
+      const items = [
+        { label: `Филе лосося — ${Math.round(base.salmon_g * mult)} г` },
+        { label: `Оливковое масло — ${oilToText(base.oil_tbsp * mult)}` },
+        { label: `CapeHerb — ${spiceToText(base.spice_tsp[state.heat] * mult)}` },
+        { label: 'Соль — по вкусу' },
+        { label: mult >= 1.5 ? 'Лайм/лимон — 2 шт.' : 'Лайм/лимон — 1 шт.' },
+        { label: `Огурец — ${scaleCount(base.cucumber, mult)}` },
+        { label: `Помидор — ${scaleCount(base.tomato, mult)}` },
+        { label: `Болгарский перец — ${scaleHalf(base.pepper_half, mult)}` },
+        { label: `Красный лук — ${scaleHalf(base.onion_quarter, mult)}` },
+        { label: `Зелень — ${scaleHalf(base.herbs_half_bunch, mult)}` },
+        { label: `Чили — ${scaleHalf(base.chili_half, mult)}` },
+        { label: `Оливковое масло (для сальсы) — ${oilToText(base.oil_salsa_tbsp * mult)}` }
+      ];
+
+      const box = $('#checklistBox');
+      box.innerHTML = '';
+      items.forEach((it) => {
+        const row = document.createElement('label');
+        row.className = 'flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-3 cursor-pointer hover:bg-white/10';
+        row.innerHTML = `
+          <input type="checkbox" class="mr-1 mt-1 checklist-check step-check" />
+          <span class="text-sm text-slate-100">${escapeHtml(it.label)}</span>
+        `;
+        box.appendChild(row);
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+
+    // ---------- Копирование текста ----------
+    function buildRecipeText() {
+      const mult = state.servings / 4;
+      const pre = base.preheat_min[state.method];
+      const cook = base.cook_min[state.method][state.doneness];
+
+      const salmon = Math.round(base.salmon_g * mult);
+      const oil = oilToText(base.oil_tbsp * mult);
+      const spice = spiceToText(base.spice_tsp[state.heat] * mult);
+
+      const ingredients = [
+        `Филе лосося — ${salmon} г`,
+        `Оливковое масло — ${oil}`,
+        `CapeHerb — ${spice}`,
+        `Соль — по вкусу`,
+        `Лайм/лимон — ${mult >= 1.5 ? '2 шт.' : '1 шт.'}`,
+        `Огурец — ${scaleCount(base.cucumber, mult)}`,
+        `Помидор — ${scaleCount(base.tomato, mult)}`,
+        `Болгарский перец — ${scaleHalf(base.pepper_half, mult)}`,
+        `Красный лук — ${scaleHalf(base.onion_quarter, mult)}`,
+        `Зелень — ${scaleHalf(base.herbs_half_bunch, mult)}`,
+        `Чили — ${scaleHalf(base.chili_half, mult)}`,
+        `Масло для сальсы — ${oilToText(base.oil_salsa_tbsp * mult)}`
+      ].join('\n');
+
+      const cookLine = {
+        grill: {
+          soft: `Гриль: ~${cook} минут, чтобы середина оставалась сочной.`,
+          medium: `Гриль: ~${cook} минут до средней готовности.`,
+          well: `Гриль: ~${cook} минут для более плотной текстуры.`
+        },
+        oven: {
+          soft: `Духовка: ~${cook} минут, сочная серединка.`,
+          medium: `Духовка: ~${cook} минут для равномерности.`,
+          well: `Духовка: ~${cook} минут, чтобы текстура была плотнее.`
+        },
+        pan: {
+          soft: `Сковорода: ~${cook} минут, нежно и сочно.`,
+          medium: `Сковорода: ~${cook} минут до средней готовности.`,
+          well: `Сковорода: ~${cook} минут, чтобы корочка была плотнее.`
+        }
+      }[state.method][state.doneness];
+
+      return `Лосось на гриле с овощной сальсой (CapeHerb)\n\nПорции: ${state.servings}\nУровень CapeHerb: ${state.heat}\nСпособ: ${state.method}\nСтепень: ${state.doneness}\nВремя: разогрев ~${pre} мин + готовка ~${cook} мин\n\nИнгредиенты:\n${ingredients}\n\nПлан:\n1) Подготовьте рыбу: промокните, посолите умеренно, выжмите немного лайма.\n2) Маринад: смешайте масло, CapeHerb и сок. Обмажьте и оставьте на 10 минут.\n3) Сальса: нарежьте овощи кубиком, добавьте зелень, чили, масло и сок. Перемешайте.\n4) Разогрейте: гриль/сковороду/духовку.\n5) Готовьте: ${cookLine}\n6) Подача: рыба + сальса сверху, долька лайма и зелень.\n`;
+    }
+
+    async function copyRecipe() {
+      const text = buildRecipeText();
+      try {
+        await navigator.clipboard.writeText(text);
+        $('#checklistMsg').textContent = 'Рецепт скопирован в буфер обмена.';
+        setTimeout(() => ($('#checklistMsg').textContent = ''), 1800);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        $('#checklistMsg').textContent = 'Рецепт скопирован в буфер обмена.';
+        setTimeout(() => ($('#checklistMsg').textContent = ''), 1800);
+      }
+    }
+
+    // ---------- Инициализация ----------
+    function init() {
+      // heat default
+      const heatBtns = $$('.heat-btn');
+      heatBtns.forEach(btn => {
+        if (btn.dataset.heat === state.heat) {
+          setActiveHeat(btn);
+          btn.style.borderColor = 'rgba(212,175,55,0.6)';
+        }
+        btn.addEventListener('click', () => {
+          state.heat = btn.dataset.heat;
+          setActiveHeat(btn);
+          updateIngredients();
+          updatePlanText();
+          if (state.checklistAdded) renderChecklist();
+        });
+      });
+
+      // doneness default
+      $$('.doneness-btn').forEach(btn => {
+        if (btn.dataset.d === state.doneness) setActiveDoneness(btn);
+        btn.addEventListener('click', () => {
+          state.doneness = btn.dataset.d;
+          setActiveDoneness(btn);
+          updatePlanText();
+        });
+      });
+
+      $('#servings').addEventListener('change', (e) => {
+        state.servings = Number(e.target.value);
+        updateIngredients();
+        updatePlanText();
+        if (state.checklistAdded) renderChecklist();
+      });
+
+      $('#method').addEventListener('change', (e) => {
+        state.method = e.target.value;
+        updatePlanText();
+      });
+
+      // шаги
+      const checks = $$('.step-check');
+      checks.forEach((inp) => inp.addEventListener('change', updateProgressUI));
+
+      loadProgress();
+      updateProgressUI();
+
+      // таймеры
+      const { pre: preSeconds0, cook: cookSeconds0 } = getCurrentTimesSeconds();
+      resetTimer($('#preheatTime'), preSeconds0);
+      resetTimer($('#cookTime'), cookSeconds0);
+
+      $('#preheatBtn').addEventListener('click', () => {
+        stopTimer(timerPreheat);
+        const { pre } = getCurrentTimesSeconds();
+        timerPreheat = startTimer($('#preheatTime'), pre, 'preheat');
+        $('#statusText').textContent = 'разогрев...';
+      });
+
+      $('#preheatReset').addEventListener('click', () => {
+        stopTimer(timerPreheat);
+        const { pre } = getCurrentTimesSeconds();
+        resetTimer($('#preheatTime'), pre);
+        $('#preheatBtn').textContent = 'Старт';
+        $('#statusText').textContent = 'готово к старту';
+      });
+
+      $('#cookBtn').addEventListener('click', () => {
+        stopTimer(timerCook);
+        const { cook } = getCurrentTimesSeconds();
+        timerCook = startTimer($('#cookTime'), cook, 'cook');
+        $('#statusText').textContent = 'готовим...';
+      });
+
+      $('#cookReset').addEventListener('click', () => {
+        stopTimer(timerCook);
+        const { cook } = getCurrentTimesSeconds();
+        resetTimer($('#cookTime'), cook);
+        $('#cookBtn').textContent = 'Старт';
+        $('#statusText').textContent = 'готово к старту';
+      });
+
+      $('#toggleChecklist').addEventListener('click', () => {
+        state.checklistAdded = true;
+        renderChecklist();
+        $('#checklistMsg').textContent = 'Чеклист обновлён под ваши настройки.';
+        setTimeout(() => ($('#checklistMsg').textContent = ''), 1800);
+      });
+
+      $('#copyPlan').addEventListener('click', copyRecipe);
+
+      // первые значения
+      updateIngredients();
+      updatePlanText();
+      $('#checklistMsg').textContent = '';
+    }
+
+    init();
+  </script>
+<script>window.parent.postMessage({ action: "ready" }, "*"); 
+ 
+window.console = new Proxy(console, {
+  get(target, prop) {
+    if (['log', 'warn', 'error'].includes(prop)) {
+      return new Proxy(target[prop], {
+        apply(fn, thisArg, args) {
+          fn.apply(thisArg, args);
+          window.parent.postMessage({ action: 'console', 
+            type: prop, 
+            args: args.map((arg) => {
+              try {
+                return JSON.stringify(arg).replace(/^["']|["']$/g, '');
+              } catch (e) {
+                return arg;
+              }
+            }) 
+          }, '*');
+        }
+      });
+    }
+    return target[prop];
+  }
+});
+</script></body>
+</html>
